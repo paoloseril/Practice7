@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button downloadBtn;
+    Button downloadBtn, resumeBtn;
     int jobID;
     TextView notification;
     AlarmManager manager;
@@ -31,7 +31,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize the UI components on code
         downloadBtn = findViewById(R.id.downloadButton);
+        resumeBtn = findViewById(R.id.resumeButton);
         notification = findViewById(R.id.notifications);
+
+        resumeBtn.setEnabled(false);
 
         jobID = 1;
 
@@ -55,9 +58,11 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(UI_UPDATE_TAG);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1000000+jobID, intent, 0);
         manager.cancel(pendingIntent);
+        resumeBtn.setEnabled(true);
+        downloadBtn.setEnabled(false);
 
         // Make Toast
-        Toast.makeText(getApplicationContext(), "Downloaded!", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Downloaded!", Toast.LENGTH_LONG).show();
     }
 
     private void startTheService() {
@@ -71,6 +76,14 @@ public class MainActivity extends AppCompatActivity {
         // manager.setInexactRepeating -- can set alarm for any intervalMillis time
         // manager.setRepeating -- minimum time to set an alarm is every one minute (60000 ms)
         manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 5000, pendingIntent);
+    }
+
+    public void startNotifying(View view) {
+        Toast.makeText(this, "Resuming download", Toast.LENGTH_LONG).show();
+        resumeBtn.setEnabled(false);
+        downloadBtn.setEnabled(true);
+        notification.setText("");
+        startTheService();
     }
 
     class NotificationReceiver extends BroadcastReceiver {
