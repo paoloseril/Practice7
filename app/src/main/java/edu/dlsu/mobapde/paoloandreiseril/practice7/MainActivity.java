@@ -39,14 +39,6 @@ public class MainActivity extends AppCompatActivity {
         jobID = 1;
 
         manager = (AlarmManager) getSystemService(ALARM_SERVICE);
-
-        // Register the receiver
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(UI_UPDATE_TAG);
-        registerReceiver(receiver, filter);
-
-        // Start the service
-        startTheService();
     }
 
     // To cancel the repeating alarm, need to have three things:
@@ -93,5 +85,23 @@ public class MainActivity extends AppCompatActivity {
             Log.d("ALARM AND BROADCAST","NotificationReceiver onReceive");
             notification.append("Is it downloading?\n\n");
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Register the receiver
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(UI_UPDATE_TAG);
+        registerReceiver(receiver, filter);
+
+        // Start the service
+        startTheService();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(receiver);
     }
 }
